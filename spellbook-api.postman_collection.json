@@ -1,0 +1,124 @@
+{
+  "info": {
+    "name": "Spellbook API",
+    "_postman_id": "b3f2e6b0-6e2e-4e77-9c66-5d1c9a6d0f7a",
+    "description": "Requests against the deployed Modal-hosted Spellbook API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://leilanni2--spellbook-api-fastapi-app.modal.run",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /spells",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/spells",
+          "host": ["{{baseUrl}}"],
+          "path": ["spells"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response is a non-empty array', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(Array.isArray(body)).to.be.true;",
+              "    pm.expect(body.length).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /brew - valid ingredients (Pepperup Potion)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"spell_id\": \"pepperup-potion\",\n    \"selected_ingredients\": [\"bicorn horn\", \"mandrake root\", \"jewelweed\"],\n    \"stir_count\": 9\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/brew",
+          "host": ["{{baseUrl}}"],
+          "path": ["brew"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has a result field', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('result');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "POST /brew - invalid empty ingredients",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"spell_id\": \"pepperup-potion\",\n    \"selected_ingredients\": [],\n    \"stir_count\": 9\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/brew",
+          "host": ["{{baseUrl}}"],
+          "path": ["brew"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 422', function () {",
+              "    pm.response.to.have.status(422);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
